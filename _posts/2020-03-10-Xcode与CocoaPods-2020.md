@@ -102,7 +102,7 @@ tags:
 	- 这个明朗存在的原因：比如本地的podspec 只到3.2，但是你更新podfile之后发现需要安装4.2版本的pod库了，这个时候必须安装心的podsepc后，才能安装pod 库
 
 ### 不同target、Configuration如何依赖不同的库
-![Alt Image Text](https://sm.ms/delete/niGrDazqvQ9CEw6tSodO4Zslc2)
+![Alt Image Text](https://pic.downk.cc/item/5e68e759e83c3a1e3a9be388.png)
 
 ⚠️这里需要注意：podfile 里面怎么写直接影响 xcconfig文件的生成
 
@@ -123,7 +123,7 @@ tags:
 				+  一个target（pod库的二进制部分）
 				+  或者多个target： pod库的二进制与他的资源target。pod库的target 的dependecy 会有他的资源target，这样保证编译这个pod库的时候也编译了pod库的资源文件，但是区分成两个target，又使得二者可以拥有各自的 bulid settings
 			+  每个pod都有自己的xccongig ——编译的说明书
-	+  生成给主工程编译连接使用的 xcconfig 文件
+	+  生成给主工程编译链接使用的 xcconfig 文件
 		+  CocoaPods 通过生成 xcconfig 文件影响主工程编译连接过程
 		+  会产生几个xcconfig
 			+  podfile 里面引入了几个target会产生几个xcconfig文件夹，供每个target使用，因为每个target
@@ -140,22 +140,22 @@ target 'BDModelDynamic_Example' do
 end 
 ``` 
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e63ae83c3a1e3a9b5e68.png)
+![Alt Image Text](https://pic.downk.cc/item/5e68e63ae83c3a1e3a9b5e68.png "主工程Configuration设置")
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e64de83c3a1e3a9b69e9.png)
+![Alt Image Text](https://pic.downk.cc/item/5e68e64de83c3a1e3a9b69e9.png "生成的xcconfig文件夹")
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e665e83c3a1e3a9b79a8.png)
+![Alt Image Text](https://pic.downk.cc/item/5e68e665e83c3a1e3a9b79a8.png "xcconfig文件夹内的xcconfih文件")
 		
 + 改变主工程设置
 	+ Configuration设置变化
 		+ 引入CocoaPods之后， 主工程的设置其实也会变化， 我们先看一下引入之前，主工程的Configuration设置，如下图所示:       
 	![Alt Image Text](https://pic.downk.cc/item/5e68e67ee83c3a1e3a9b8304.png)
 	
-		+ 引入之后，如下图所示
+		+ 引入之后，如下图所示，可以发现cocopods生成的xcconfig文件已经自动配置到了主工程的Configuration设置中，用于在编译链接时候使用
 	
 	![Alt Image Text](https://pic.downk.cc/item/5e68e692e83c3a1e3a9b8b0c.png)
 	
-	+ Bulid phase 的 link Binary with libraries 中 增加了 libPods-XXXX.a （pod project 编译产物）
+	+ Bulid phase 的 link Binary with libraries 中 增加了 libPods-XXXX.a （pod project 编译产物），用于控制编译的顺序
 
 ### xcconfig 文件介绍
 
