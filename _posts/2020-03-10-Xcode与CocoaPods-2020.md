@@ -1,4 +1,18 @@
-# Xcode 与 CocoaPods (一）
+---
+layout:     post
+title:      Xcode 与 CocoaPods (一）
+subtitle:   
+date:       2020-03-10
+author:     LML
+header-img: img/post-bg-ios9-web.jpg
+catalog: true
+tags:
+    - iOS
+    - Xcode
+    - CocoaPods
+---
+
+# 前言
 本文简单介绍平时项目中用到的 Xcode 与 CocoaPods 的相关概念以及知识。涉及的可能不全面，更加系统的介绍会在后续展开
 
 ## Xcode工程配置和基本概念
