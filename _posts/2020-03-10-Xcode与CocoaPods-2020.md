@@ -49,7 +49,7 @@ tags:
 + 上面三者的关系是 Scheme 绑定具体一个 Configuration 以及要编译的Target，还有对应的可选行为（Main Thread Checker，启动参数。Scheme是动作，比如说，NewsInHouseTest 是一个Scheme，里面配置了使用Debug Configuration，并且注入Main Thread Checker，编译的 Target 用 NewsInHouse。
 + 一个 Project 可以包含多个Target，编译链接的时候可以自由选择任意一个 Target，每个 Target 又可以设置（选择）不同的 Configuration，来影响产物。比如说头条那个NewsBackgroundFetch，编译的是 NewsInHouse 的Target，用NewsInHouseDebug Configuration，然后在里面勾选了一个Simulate Background Fetch额外参数。
 
-![Alt Image Text](posts_img/Lark20200310-215300.png "Xcode Sheme 设置页面")
+![Alt Image Text](/posts_img/Lark20200310-215300.png)
 
 ## Xcode Config File
 + Xcode Config File(xcconfig)是一个用来管理Build Settings的文本配置
