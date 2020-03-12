@@ -49,7 +49,8 @@ tags:
 + 上面三者的关系是 Scheme 绑定具体一个 Configuration 以及要编译的Target，还有对应的可选行为（Main Thread Checker，启动参数。Scheme是动作，比如说，NewsInHouseTest 是一个Scheme，里面配置了使用Debug Configuration，并且注入Main Thread Checker，编译的 Target 用 NewsInHouse。
 + 一个 Project 可以包含多个Target，编译链接的时候可以自由选择任意一个 Target，每个 Target 又可以设置（选择）不同的 Configuration，来影响产物。比如说头条那个NewsBackgroundFetch，编译的是 NewsInHouse 的Target，用NewsInHouseDebug Configuration，然后在里面勾选了一个Simulate Background Fetch额外参数。
 
-![Alt Image Text](posts_img/Lark20200310-215300.png "Xcode Sheme 设置页面")
+<img src="https://pic.downk.cc/item/5e68c502e83c3a1e3a82d8dc.png" width = "300" height = "200" alt="Xcode Sheme 设置页面" align=center />
+
 
 ## Xcode Config File
 + Xcode Config File(xcconfig)是一个用来管理Build Settings的文本配置
@@ -57,10 +58,12 @@ tags:
 + CocoPods 采用了 xcconfig
 + xcconfig 的具体分析等下面介绍 CocoaPods 时在介绍
 + 一般情况下我们可以根据 Build Settings的手册判断我们可以在 xcconfig 里面配置写入什么
++ 自己为 xcode project 配置 xcconfig
+![Alt Image Text](https://pic.downk.cc/item/5e68e3cee83c3a1e3a9a58a5.png)
 + 参考
 	+ 语法5分钟上手：<https://pewpewthespells.com/blog/xcconfig_guide.html>
 	+ Build Settings的手册-Xcode Help：<https://help.apple.com/xcode/mac/10.2/#/itcaec37c2a6> 
-![Alt Image Text](posts_img/Lark20200310-220728.png "自己给Xcode配置xcconfig")
+
 
 ## Build Phase
 + Build Phase告诉Xcode怎么构建产物
@@ -72,7 +75,7 @@ tags:
 
 ## Build Settings
 
-+ Build Settings ：是用来管理当前Target产物生成的各项配置，Target会继承自Project级别的配置，可覆盖
++ Build Settings：是用来管理当前Target产物生成的各项配置，Target会继承自Project级别的配置，可覆盖
 	+ 编译相关参数: Header Search Path
 	+ 链接相关参数: Library Search Path(链接的静态/动态库的搜索路径，-L)、OTHER_LDFLAGS（除系统库外，额外链接的库配置，-l）
 
@@ -100,12 +103,12 @@ tags:
 	- 这个明朗存在的原因：比如本地的podspec 只到3.2，但是你更新podfile之后发现需要安装4.2版本的pod库了，这个时候必须安装心的podsepc后，才能安装pod 库
 
 ### 不同target、Configuration如何依赖不同的库
-![Alt Image Text](posts_img/Lark20200311-161601.png "")
+![Alt Image Text](https://pic.downk.cc/item/5e68e759e83c3a1e3a9be388.png)
 
 ⚠️这里需要注意：podfile 里面怎么写直接影响 xcconfig文件的生成
 
 ### pod引入主工程的宏
-![Alt Image Text](posts_img/dd4242eb-12bd-48ab-aa61-6c7402a31d5f.png "")
+![Alt Image Text](https://pic.downk.cc/item/5e68e419e83c3a1e3a9a7809.png)
 
 ### 如何创建自己的 pod 库
 网上资料很多，这里不在介绍，可以参考 <https://www.jianshu.com/p/19a0b31b47a3>
@@ -121,7 +124,7 @@ tags:
 				+  一个target（pod库的二进制部分）
 				+  或者多个target： pod库的二进制与他的资源target。pod库的target 的dependecy 会有他的资源target，这样保证编译这个pod库的时候也编译了pod库的资源文件，但是区分成两个target，又使得二者可以拥有各自的 bulid settings
 			+  每个pod都有自己的xccongig ——编译的说明书
-	+  生成给主工程编译连接使用的 xcconfig 文件
+	+  生成给主工程编译链接使用的 xcconfig 文件
 		+  CocoaPods 通过生成 xcconfig 文件影响主工程编译连接过程
 		+  会产生几个xcconfig
 			+  podfile 里面引入了几个target会产生几个xcconfig文件夹，供每个target使用，因为每个target
@@ -138,22 +141,22 @@ target 'BDModelDynamic_Example' do
 end 
 ``` 
 
-![Alt Image Text](posts_img/8838a78d-ff47-4ae7-81fc-9f2dd5262f21.png "主工程Configuration设置")
+![Alt Image Text](https://pic.downk.cc/item/5e68e63ae83c3a1e3a9b5e68.png "主工程Configuration设置")
 
-![Alt Image Text](posts_img/12c532b3-e216-4b1d-acae-3609d0ba7b48.png "pod 产生的xcconfig文件夹")
+![Alt Image Text](https://pic.downk.cc/item/5e68e64de83c3a1e3a9b69e9.png "生成的xcconfig文件夹")
 
-![Alt Image Text](posts_img/76982ce6-0b84-4238-b89d-8f1cca3e7f97.png "xcconfig文件夹那边xcconfig文件")
+![Alt Image Text](https://pic.downk.cc/item/5e68e665e83c3a1e3a9b79a8.png "xcconfig文件夹内的xcconfih文件")
 		
 + 改变主工程设置
 	+ Configuration设置变化
 		+ 引入CocoaPods之后， 主工程的设置其实也会变化， 我们先看一下引入之前，主工程的Configuration设置，如下图所示:       
-	![Alt Image Text](posts_img/cocoapods_before_project_config.png "主工程Configuration设置——引入CocoaPods之前")
+	![Alt Image Text](https://pic.downk.cc/item/5e68e67ee83c3a1e3a9b8304.png)
 	
-		+ 引入之后，如下图所示
+		+ 引入之后，如下图所示，可以发现cocopods生成的xcconfig文件已经自动配置到了主工程的Configuration设置中，用于在编译链接时候使用
 	
-	![Alt Image Text](posts_img/cocoapod_main_project_configuration.png "主工程Configuration设置——引入CocoaPods之后")
+	![Alt Image Text](https://pic.downk.cc/item/5e68e692e83c3a1e3a9b8b0c.png)
 	
-	+ Bulid phase 的 link Binary with libraries 中 增加了 libPods-XXXX.a （pod project 编译产物）
+	+ Bulid phase 的 link Binary with libraries 中 增加了 libPods-XXXX.a （pod project 编译产物），用于控制编译的顺序
 
 ### xcconfig 文件介绍
 
@@ -186,7 +189,7 @@ end
 	+ 具体可以自己参考自己项目工程里面该项的脚本
 +  上面脚本在拷贝 XcAsset 资源的时候存在的 bug	
 	+ 脚本片段	
-![Alt Image Text](posts_img/c8f33b8c-b5a5-48af-8460-e2817a1206ef.png "主工程Configuration设置——引入CocoaPods之后")
+![Alt Image Text](https://pic.downk.cc/item/5e68e6b4e83c3a1e3a9b9773.png)
 	+ bug
 		+ XCASSET_FILES 是一个数组，其中有几个元素取决于有多少个pod 将xcassets写到了s.resoures中，里面的内容是通过s.resoures引入资源的pod库的xcasset的路径。通过脚本可以看出，使用resource引入xcasset资源的时候会发生：
 			+ 把pods中通过resource形式引入xcasset的xcasset的路径放入XCASSET_FILES数组中
