@@ -49,7 +49,8 @@ tags:
 + 上面三者的关系是 Scheme 绑定具体一个 Configuration 以及要编译的Target，还有对应的可选行为（Main Thread Checker，启动参数。Scheme是动作，比如说，NewsInHouseTest 是一个Scheme，里面配置了使用Debug Configuration，并且注入Main Thread Checker，编译的 Target 用 NewsInHouse。
 + 一个 Project 可以包含多个Target，编译链接的时候可以自由选择任意一个 Target，每个 Target 又可以设置（选择）不同的 Configuration，来影响产物。比如说头条那个NewsBackgroundFetch，编译的是 NewsInHouse 的Target，用NewsInHouseDebug Configuration，然后在里面勾选了一个Simulate Background Fetch额外参数。
 
-<img src="https://pic.downk.cc/item/5e68c502e83c3a1e3a82d8dc.png" width = "300" height = "200" alt="Xcode Sheme 设置页面" align=center />
+<img src="https://pic.downk.cc/item/5e68c502e83c3a1e3a82d8dc.png" width = "400" height = "260" alt="Xcode Sheme 设置页面" align=center>
+
 
 
 ## Xcode Config File
@@ -59,7 +60,9 @@ tags:
 + xcconfig 的具体分析等下面介绍 CocoaPods 时在介绍
 + 一般情况下我们可以根据 Build Settings的手册判断我们可以在 xcconfig 里面配置写入什么
 + 自己为 xcode project 配置 xcconfig
-![Alt Image Text](https://pic.downk.cc/item/5e68e3cee83c3a1e3a9a58a5.png)
+
+<img src="https://pic.downk.cc/item/5e68e3cee83c3a1e3a9a58a5.png" width = "400" height = "100" alt="Xcode 配置xcconfig" align=center>
+
 + 参考
 	+ 语法5分钟上手：<https://pewpewthespells.com/blog/xcconfig_guide.html>
 	+ Build Settings的手册-Xcode Help：<https://help.apple.com/xcode/mac/10.2/#/itcaec37c2a6> 
@@ -80,17 +83,6 @@ tags:
 	+ 链接相关参数: Library Search Path(链接的静态/动态库的搜索路径，-L)、OTHER_LDFLAGS（除系统库外，额外链接的库配置，-l）
 
 # CocoaPods与包管理
-## 背景概念
-+ RVM：管理 Ruby 版本的工具
-	+ 系统可以安装多个 Ruby 版本，用 RVM 来切换
-+ Ruby 与 RubyGems
-  - 每个版本的 Ruby 都有自己的一套工具工具集；RubyGems 用来管理这些 Ruby 的工具集，可以安装各种工具
-  - 这些工具包含：Bundler、CocoaPods等，也可以包含自己自定义的 gem 工具
-+ Bundler
-  - 管理当前目录下的工具环境：GemFile Gemfile.lock
-  - 例如可以控制一个工程（目录）需要的 CocoPods 版本和 Ruby 工具的版本
-+ 举个例子
-	+目前头条在工程目录下放置了 GemFile，开发的时候可以先执行一次 bundle insatll，一方面保证所有开发者的环境一致，另一方面方便安装一些 gem 工具集
 	
 ## 基本使用
 ### Pod update、 pod install、 pod update repo update 、pod update no repo update
@@ -103,12 +95,12 @@ tags:
 	- 这个明朗存在的原因：比如本地的podspec 只到3.2，但是你更新podfile之后发现需要安装4.2版本的pod库了，这个时候必须安装心的podsepc后，才能安装pod 库
 
 ### 不同target、Configuration如何依赖不同的库
-![Alt Image Text](https://pic.downk.cc/item/5e68e759e83c3a1e3a9be388.png)
+<img src="https://pic.downk.cc/item/5e68e759e83c3a1e3a9be388.png" width = "400" height = "200"  align=center>
 
 ⚠️这里需要注意：podfile 里面怎么写直接影响 xcconfig文件的生成
 
 ### pod引入主工程的宏
-![Alt Image Text](https://pic.downk.cc/item/5e68e419e83c3a1e3a9a7809.png)
+<img src="https://pic.downk.cc/item/5e68e419e83c3a1e3a9a7809.png" width = "400" height = "200" align=center>
 
 ### 如何创建自己的 pod 库
 网上资料很多，这里不在介绍，可以参考 <https://www.jianshu.com/p/19a0b31b47a3>
@@ -140,21 +132,20 @@ target 'BDModelDynamic_Example' do
   end
 end 
 ``` 
+<img src="https://pic.downk.cc/item/5e68e63ae83c3a1e3a9b5e68.png" width = "300" height = "300" title="主工程Configuration设置" align=center>
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e63ae83c3a1e3a9b5e68.png "主工程Configuration设置")
+<img src="https://pic.downk.cc/item/5e68e64de83c3a1e3a9b69e9.png" width = "300" height = "200" title="生成的xcconfig文件夹" align=center>
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e64de83c3a1e3a9b69e9.png "生成的xcconfig文件夹")
+<img src="https://pic.downk.cc/item/5e68e665e83c3a1e3a9b79a8.png" width = "300" height = "200" title="xcconfig文件夹内的xcconfih文件" align=center>
 
-![Alt Image Text](https://pic.downk.cc/item/5e68e665e83c3a1e3a9b79a8.png "xcconfig文件夹内的xcconfih文件")
 		
 + 改变主工程设置
 	+ Configuration设置变化
-		+ 引入CocoaPods之后， 主工程的设置其实也会变化， 我们先看一下引入之前，主工程的Configuration设置，如下图所示:       
-	![Alt Image Text](https://pic.downk.cc/item/5e68e67ee83c3a1e3a9b8304.png)
-	
+		+ 引入CocoaPods之后， 主工程的设置其实也会变化， 我们先看一下引入之前，主工程的Configuration设置，如下图所示:
+		
+			<img src="https://pic.downk.cc/item/5e68e67ee83c3a1e3a9b8304.png" width = "500" height = "250" align=center>
 		+ 引入之后，如下图所示，可以发现cocopods生成的xcconfig文件已经自动配置到了主工程的Configuration设置中，用于在编译链接时候使用
-	
-	![Alt Image Text](https://pic.downk.cc/item/5e68e692e83c3a1e3a9b8b0c.png)
+		<img src="https://pic.downk.cc/item/5e68e692e83c3a1e3a9b8b0c.png" width = "500" height = "250" align=center>
 	
 	+ Bulid phase 的 link Binary with libraries 中 增加了 libPods-XXXX.a （pod project 编译产物），用于控制编译的顺序
 
@@ -204,4 +195,66 @@ end
 			+ get_all_xcassets 是我写的一个ruby脚本，这一行的作用是找出主工程当前target的build phase中的copy bundle resources中的所有xcassets，不在筛选pod库的——因为pod库的没必要在筛选了，应该被copy的已经在XCASSET_FILES里面了
 			- Sed 命令实现替换 cocpods 生成的脚本的某一行
 	
-## CocoaPods 插件
+# RubyGems 工具集
+## 背景概念
++ RVM：管理 Ruby 版本的工具
+	+ RVM 是一个管理多个 Ruby 环境的工具，可以提供一个便捷的多版本 Ruby 环境的管理和切换。通过 RVM 我们可以轻松的切换 Ruby 的版本，从而使用不同的 Ruby 环境
++ Ruby 与 RubyGems
+	+ RubyGems 简称 Gem，是一个用于对 Ruby 组件进行管理及打包的工具。通过 Gem 我们可以管理多个 Ruby 工具集 。我们日常用到的很多工具都是一个 Gem 工具，例如：Bundler、CocoaPods等，也可以包含自己自定义的 gem 工具。
+	+ 每个版本的 Ruby 都有自己的一套工具工具集；RubyGems 用来管理这些 Ruby 的工具集
++ Bundler
+	+ Bundler 是一个 Ruby 工具，是一个 Gem。Bundler 是用来管理维护项目中依赖的 Gem 的工具。如果我们用一个 iOS 工程来类比一个 Ruby 工程，Bundler 就相当于工程中的 CocoaPods。
+	+ Bundler 这个工具中，也有对应的来描述这个工程的依赖关系的文件 -- Gemfile 。其中使用 Ruby 的语法来描述工程所需依赖、依赖的工具的版本等信息。
+		+ 一个工程想使用bunlder，只需要：gem install bundler 安装bundler，然后想用的工程 里面建立一个gemfile，执行bundler install 。之后 执行任何人命令之前加上 bundle exec
+		+ bundle exec 会在当前项目依赖的上下文环境中执行命令：相同的 gem、相同的依赖关系、相同的版本号
+	+ CocoaPods 是一个 Ruby 的工具，所以可以使用 Bundler 来管理。通过 Bundler 中的 Gemfile 的描述文件，我们可以来管理项目中使用的 CocoaPods 及 CocoaPods 版本，以及需要安装的插件（特别是为工程而订制的插件）。
++ 举个例子
+	+ 目前头条在工程目录下放置了 GemFile，开发的时候可以先执行一次 bundle update，一方面保证所有开发者的环境一致，另一方面方便安装一些 gem 工具集
+	+ 我们可以为自己的工程自定义gem工具，然后用bundler 来控制版本和安装，下面会进行简单的介绍
+
+### 自定义gem工具
+
+#### CocoaPods Plugins
+上面说到，我们可以为自己的工程定义gem工具，现在有一个为 Xcode 工具定义的 gem 工具（开发框架）：CocoaPods Plugins。我们可以在CocoaPods Plugins 基础上更便捷的开发自定义的 gem 工具，完成自定义Pod 命令，对pod 相关命令进行hook。可以参考 <https://www.jianshu.com/p/5889b25a85dd>，文档详细的说明了如何建立了一个 CocoaPods Plugin。
+##### 流程
+1. 开发
+	+ hook
+	+ add 新函数
+
+2. 加载自定义的插件进行调试：
+	+ 假设你开发的插件想作用于 A Xcode project，在A project 的 Gemfile 里面添加自定义的 插件，可以使用path来指定路径。
+	+ gem 'cocopods-test', :path=>'../CocoaPods-test'
+	+ 执行bundle install，后续正常秩序bundle exec pos install 等
+
+3. 发布
+	+ 发布行为与使用 CocoaPods 管理 pod 库类似，我们开发提个pod库，会把pod 库上传到公共源。而这里也要将新版本发布，并上传到对应的Rubygem源，Gemfile 里面可以设定 gem 源。具体步骤：
+		+ 修改当前版本号version.rb
+		+ 在CocoaPods plugins 工程的根路径上，执行rake build 
+		+ build完成会看到一个pkg文件夹，里面有对应的含有版本号，并且扩展名为.gem的文件，发布到对应的gems仓库（gem源）中
+		+ 如果是开源的插件，在项目路径使用 pod plugins publish，会创建PR到插件列表 
+
+##### 如何开发
+开发分为两种：
++ hook 已有的 CocoaPods 方法
+	+ alias_method来进行hook方法（类似于OC的swizzle
+	+ hook 的方法写在自己定义的Ruby文件中，文件内部结构（Class 和module）保持和CocoaPods原始代码文件一样的结构，hook方法名注意添加独一无二前缀，注意调用原始方法，以防止冲突（规则同OC的swizzle） 
+	+ 定义的ruby 文件需要被require（CocoaPods 的入口处被require 就可以了，入口指的是plugin.ruby文件和与插件名字同名的ruby文件
+
+<img src="https://pic.downk.cc/item/5e6b355be83c3a1e3a816d6a.jpg" width = "600" height = "300" align=center>
+	
++ 增加新的命令 
+	+ 定义 command 的子类，写自己的代码逻辑
+	+ pod 插件名称 +你定义的command 名字即可 
++ 后续有时间在写demo，传到github上去，才能简单明了的写清楚如何自定义一个 CocoaPods plugin
+
+#### 插件开发
++ 也可以开发其他插件，而不是基于cocopods Plugins 的
++ CocoaPods 命令其实是一个gem ，想实现类似功能（增加新的 CocoaPods command、hook已有的command ）你也可以不利用 CocoaPods plugin，完全自己开发。
+	
+# 参考
++ CocoaPods 源码解析 <http://www.saitjr.com/ios/cocoapods-start-with-pod-command.html>
++ CocoaPods原理：<http://www.cloudchou.com/ios/post-990.html>
++ Xcode Build Settings：<https://help.apple.com/xcode/mac/10.2/#/itcaec37c2a6> 或者 Xcode自带的Help
++ xcconfig教程: <https://pewpewthespells.com/blog/xcconfig_guide.html>
++ CocoaPods 源码,可以hook哪些方法可以参考：<https://www.rubydoc.info/github/cocoapods/cocoapods/master/Pod%2FInstaller:run_podfile_post_install_hook>
++ 语法5分钟上手Xcconfig：<https://pewpewthespells.com/blog/xcconfig_guide.html>
