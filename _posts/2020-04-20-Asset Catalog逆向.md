@@ -7,7 +7,7 @@ author:     LML
 header-img: img/post-bg-ios9-web.jpg
 catalog: true
 tags:
-    - Xcode
+    - Xcode Image
     - 逆向
 ---
 
@@ -33,13 +33,15 @@ tags:
 
 ## 参考
 更详尽的知识参考：
-<https://help.apple.com/xcode/mac/current/#/dev10510b1f7>
-<https://developer.apple.com/library/archive/documentation/Xcode/Reference/xcode_ref-Asset_Catalog_Format/index.html>
+
++ <https://help.apple.com/xcode/mac/current/#/dev10510b1f7>
++ <https://developer.apple.com/library/archive/documentation/Xcode/Reference/xcode_ref-Asset_Catalog_Format/index.html>
 
 # What is a car file?
->+ the asset catalogs containing the various assets (images, icons, textures, …) are not simply copied to the app bundle but they are compiled as car files.  
->+ **Xcode** lets you edit your asset catalogs and compile them.  
->+ **actool** lets you compile, print, update, and verify asset catalogs.    
+>
++ the asset catalogs containing the various assets (images, icons, textures, …) are not simply copied to the app bundle but they are compiled as car files.  
++ **Xcode** lets you edit your asset catalogs and compile them.  
++ **actool** lets you compile, print, update, and verify asset catalogs.    
 + **assetutil** lets you process car files. It can remove unneeded assets from a car file but it can also parse a car file and produce a JSON output.  
 	+ Running assetutil -I Assets.car will print some interesting information about the car file
 
@@ -50,8 +52,8 @@ tags:
 ## What is a BOM file?
 BOM 文件在开头有个文件头，包含信息：  
 
-+ Block Table 的便宜和长度  
-+ TOC（Table of content）便宜和长度  
++ Block Table 的偏移和长度  
++ TOC（Table of content）偏移和长度  
 
 根据 BOM文件的文件头，可以找到和读取 Block Table 和TOC
 ### TOC
@@ -151,7 +153,7 @@ NSData *GetDataFromBomBlock(BOMStorage inBOMStorage, const char *inBlockName)
 
 ![](https://pic.downk.cc/item/5e9da2dac2a9a83be5b8b7a5.jpg)
 ## car file 的 各个部分
-Aseets.car 完全遵循 BOM的格式，其中与TOC name 如下：  
+Aseets.car 完全遵循 BOM的格式，其中定义的TOC name 如下：  
 
 + 普通数据结构
 	+ CARHEADER
@@ -171,8 +173,9 @@ Aseets.car 完全遵循 BOM的格式，其中与TOC name 如下：
 	+  BEZELS
 	+  BITMAPKEYS
 	+  ELEMENT_INFO
-	+  PART_INFO
-  本文主要介绍几个重点的，不全部介绍
+	+  PART_INFO  
+  
+本文主要介绍几个重点的，不全部介绍
   
 ### CARHEADER block
 >The CARHEADER block contains information about the number of assets in the file as well as versioning information. It has a fixed size of 436 bytes.  
@@ -218,8 +221,9 @@ Tree APPEARANCEKEYS
 	 'NSAppearanceNameSystem': 0  
 ```  
 ### FACETKEYS Tree
-Key：asset name  
-Value： attributes of image in asset ，is renditionkeytoken struct.  
++ Key：asset name  
++ Value： attributes of image in asset ，is renditionkeytoken struct. 
+	+ 存储了每个Asset 的一些 catalog 属性，每个asset设置成什么，都在这里体现（上午 asset catalog 介绍中介绍了一个asset具体可以设置哪些属性）
 
 ```  
 struct renditionkeytoken {
@@ -266,9 +270,10 @@ enum RenditionAttributeType
 };
 ```  
 ### KEYFORMAT Block
-+ KEYFORMAT Block 主要负责存储 Asset Catalog 使用过的 renditionKeyTokens，renditionKeyTokens 有哪几种选择：上面介绍的enum RenditionAttributeType，Asset Catalog 使用了几种，这几种renditionKeyTokens 都会在该数据结构中的renditionKeyTokens 数组中体现。
-+ 下面要介绍的 RENDITION Tree 中的key 是 renditionKeyTokens 数组中的 renditionKeyTokens 对应的value。
-	+ RENDITION Tree 存储了image 等对应的数据，每个image 都对应Tree中的对key value。key就是该image对应renditionKeyTokens的值
++ KEYFORMAT Block 主要负责存储 Asset Catalog 使用过的 renditionKeyTokens，
+	+ renditionKeyTokens 有哪几种选择：上面介绍的enum RenditionAttributeType，Asset Catalog 使用了几种，该数据结构中的renditionKeyTokens 数组出现几种。
++ 下面要介绍的 RENDITION Tree 中的 key 是renditionKeyTokens 数组中的 renditionKeyTokens 对应的value。
+	+ RENDITION Tree 存储了image 等对应的数据，每个image 都对应 Tree 中的一对 key value。key就是该image的renditionKeyTokens值（catalog设置值）
 + 可以实现：已知 asset name——访问 FACETKEYS Tree，确定该 asset name 对应的几种 renditionKeyTokens 的value——遍历RENDITION tree的value——取到对应的data
 
 ``` 
@@ -331,6 +336,7 @@ RENDITION Tree 的 key 上面已经介绍，其 value 部分主要分为三个�
 			kRenditionTLVType_Frame					= 0x3F1,
 		};  
 		```  
+
 + the rendition data
 	+ The rendition data can be seen after these complex structures. It contains a header specific to the type of the rendition （ type followed by the actual data either compressed or uncompressed）.The length is set in the renditionLength field of the csibitmaplist structure.  
 	+ there are 21 types of renditions:  
@@ -387,7 +393,7 @@ struct CUIThemePixelRendition {
 	
 # 参考	
 + <https://blog.timac.org/2018/1018-reverse-engineering-the-car-file-format/>
- + 提供了工具：以json形式看asset.car 的Block 和 Tree
+	+ 提供了工具：以json形式看asset.car 的Block 和 Tree
 + <https://blog.timac.org/2018/1112-quicklook-plugin-to-visualize-car-files/#getting-the-asset-variations>
 
 # 疑问
