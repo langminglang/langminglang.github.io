@@ -9,11 +9,13 @@ catalog: true
 tags:
     - python
     - 编码
+    
 ---
 
 ### 目录
 
 - unicode和编码
+- unicode 和string
 - python中判断相等
 - 总结
 
@@ -27,40 +29,70 @@ Unicode 是字符集， unicode 的引入是为了囊括世界上所有语言的
 
 总结起来就是 UTF-8 等编码方式解决的是二进制到序号之间的对应问题， Unicode 等字符集解决的是字符到序号之间的对应问题。
 
+## unicode 和 stirng
++ byte string 里面存储的是unicode通过utf-8编码后得到的bytes，所以byte string解码(decode)后即可得到unicode
++ unicode是byte string通过utf-8解码后得到的，unicode用utf-8编码(encode)可以得到对应的bytes
+
+
 ## python中判断相等
 
 ```
->>> u"哈" == "哈"
-__main__:1: UnicodeWarning: Unicode equal comparison failed to convert both arguments to Unicode - interpreting them as being unequal
-False
+import sys
+import os
+import requests
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
->>> "哈"
-'\xe5\x93\x88'
->>> u"哈"
-u'\u54c8'
->>> type("哈")
-<type 'str'>
->>> type(u"哈")
-<type 'unicode'>
+print sys.getdefaultencoding()
 
->>> import sys
->>> reload(sys)
-<module 'sys' (built-in)>
->>> sys.getdefaultencoding()
-'ascii'
->>> sys.setdefaultencoding("utf8")
->>> u"哈" == "哈"
+print u"哈" == "哈"
+
+结果：
+utf-8
 True
-```
+```  
+
+```  
+import sys
+import os
+import requests
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
+
+print sys.getdefaultencoding()
+
+print u"哈" == "哈"
+结果 
+ascii
+False
+/Users/langminglang/Documents/jenkins_jiaoben/untitled.py:12: UnicodeWarning: Unicode equal comparison failed to convert both arguments to Unicode - interpreting them as being unequal
+  print u"哈" == "哈"
+```  
+
+```  
+import sys
+import os
+import requests
+
+print sys.getdefaultencoding()
+print u"哈".encode('utf-8') == "哈"
+结果
+ascii
+True
+```  
+  
 首先要明确
 
 - 判断相等的时候实际上判断的是二进制是否相等
 - python 中 string， 默认采用了 utf-8 的方式进行了编码
+- 其他使用默认编码进行编码
 - python sys.getdefaultencoding()： 获取默认编码， 可以看到默认编码为 ascii
 
 所以，由上面的例子可以看出：
 
-- 默认情况下，u"哈" == "哈" false，因为前者不是string类型，采取ascii编码；后者是string 采取的是utf-8编码。虽然二者对应的序号相同，但是由于采取的编码方式不同，所以二进制不同，不相等
+- "哈"是string,经过了这个过程：汉字——unicode序号——utf-8编码得到二进制
+- u"哈" 是unicode，直接是个unicode序号，相当于string中间步骤的产物，只有一个过程：编码，默认是ascii编码
+- 所有默认情况下，虽然二者对应的序号相同，但是由于采取的编码方式不同，所以二进制不同，不相等
 - 若设定默认的编码方式为utf8，与string相同，则能得到相同的二进制
 
 

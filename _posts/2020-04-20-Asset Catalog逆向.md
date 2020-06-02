@@ -395,6 +395,7 @@ struct CUIThemePixelRendition {
 + <https://blog.timac.org/2018/1018-reverse-engineering-the-car-file-format/>
 	+ 提供了工具：以json形式看asset.car 的Block 和 Tree
 + <https://blog.timac.org/2018/1112-quicklook-plugin-to-visualize-car-files/#getting-the-asset-variations>
++ <https://developer.apple.com/videos/play/wwdc2018/227/>
 
 # 疑问
 + 执行 xcrun assetutil --info Assets.car 命令得到 Assets.car 的信息，回包含packimage
