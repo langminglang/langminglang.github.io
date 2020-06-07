@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      python 中的 unicode和编码
-subtitle:   
+subtitle:   python 中的 unicode和编码
 date:       2018-01-04
 author:     BY
 header-img: img/post-bg-BJJ.jpg
@@ -9,7 +9,6 @@ catalog: true
 tags:
     - python
     - 编码
-    
 ---
 
 ### 目录
