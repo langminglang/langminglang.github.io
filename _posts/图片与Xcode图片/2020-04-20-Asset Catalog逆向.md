@@ -20,6 +20,7 @@ tags:
 	+ 几种图片格式的对比
 	+ 图片编码、无损压缩与有损压缩
 	+ 图片处理相关工具
+
 本篇主要介绍 Asset Catalo 逆向相关。
 
 # What are Asset Catalogs?
@@ -38,13 +39,13 @@ tags:
 
 # What is a car file?
 >
-+ the asset catalogs containing the various assets (images, icons, textures, …) are not simply copied to the app bundle but they are compiled as car files.  
++ The asset catalogs containing the various assets (images, icons, textures, …) are not simply copied to the app bundle but they are compiled as car files.  
 + **Xcode** lets you edit your asset catalogs and compile them.  
 + **actool** lets you compile, print, update, and verify asset catalogs.    
 + **assetutil** lets you process car files. It can remove unneeded assets from a car file but it can also parse a car file and produce a JSON output.  
 	+ Running assetutil -I Assets.car will print some interesting information about the car file
 
-包含 Assets 的 Asset Catalog 的边缘产物为 Assets.car 
+包含 Assets 的 Asset Catalog 的编译产物为 Assets.car 
 可以通过 ```  UIImage *myImage = [UIImage imageNamed:@"MyImage"];```  使用Assets.car 中的图片。当改方法被调用时，实际执行了下面：
 >The private CoreUI.framework (/System/Library/PrivateFrameworks/CoreUI.framework) is asked to give the best UIImage corresponding to the asset named MyImage. MyImage is the Asset Name, also called Facet Name. **The car file can contain multiple images for a given asset name**: @1x resolution, @2x resolution, @3x resolution, dark mode, … **These representations of the asset are called renditions**. Each rendition has a unique identifier called the rendition key. The rendition key is in fact a list of attributes describing the properties of the rendition: original facet, resolution, …
 
@@ -108,7 +109,7 @@ NSData *GetDataFromBomBlock(BOMStorage inBOMStorage, const char *inBlockName)
 
 + 数据结构，存储数据  
 + Tree  
-	+ Block 是一个节点，存储了改Block对应的ID、是否有孩子、有孩子存储所有孩子的Block ID（根据上述方法确定对应Block对应的起始位置和长度）、没有孩子则存储该节点的内容（节点内容是key value 对）
+	+ Block 是一个节点，存储了该Block对应的ID、是否有孩子、有孩子存储所有孩子的Block ID（根据上述方法确定对应Block对应的起始位置和长度）、没有孩子则存储该节点的内容（节点内容是key value 对）
 	+ Tree 遍历所有节点得到的是数组，数组里面是 key value对
 
 ```   
@@ -128,25 +129,45 @@ size_t BOMTreeIteratorValueSize(BOMTreeIterator iterator);
 使用举例：  
 
 ```   
-NSData *GetDataFromBomBlock(BOMStorage inBOMStorage, const char *inBlockName)
+typedef void (^ParseBOMTreeCallback)(NSData *inKey, NSData *inValue);
+void ParseBOMTree(BOMStorage inBOMStorage, const char *inTreeName, ParseBOMTreeCallback keyValueCallback)
 {
-	NSData *outData = nil;
+	NSData *keyData = nil;
+	NSData *keyValue = nil;
 	
-	BOMBlockID blockID = BOMStorageGetNamedBlock(inBOMStorage, inBlockName);
-	size_t blockSize = BOMStorageSizeOfBlock(inBOMStorage, blockID);
-	if(blockSize > 0)
+	// Open the BOM tree
+	BOMTree bomTree = BOMTreeOpenWithName(inBOMStorage, inTreeName, false);
+	if(bomTree == NULL)
+		return;
+
+	// Create a BOMTreeIterator and loop until the end
+	BOMTreeIterator	bomIterator = BOMTreeIteratorNew(bomTree, NULL, NULL, NULL);
+	while(!BOMTreeIteratorIsAtEnd(bomIterator))
 	{
-		void *mallocedBlock = malloc(blockSize);
-		int res = BOMStorageCopyFromBlock(inBOMStorage, blockID, mallocedBlock);
-		if(res == noErr)
+		// Get the key
+		void * key = BOMTreeIteratorKey(bomIterator);
+		size_t keySize = BOMTreeIteratorKeySize(bomIterator);
+		keyData = [NSData dataWithBytes:key length:keySize];
+		
+		// Get the value associated to the key
+		size_t valueSize = BOMTreeIteratorValueSize(bomIterator);
+		if(valueSize > 0)
 		{
-			outData = [[NSData alloc] initWithBytes:mallocedBlock length:blockSize];
+			void * value = BOMTreeIteratorValue(bomIterator);
+			if(value != NULL)
+			{
+				keyValue = [NSData dataWithBytes:value length:valueSize];
+			}
 		}
 		
-		free(mallocedBlock);
+		if(keyData != nil)
+		{
+			keyValueCallback(keyData, keyValue);
+		}
+		
+		// Next item in the tree
+		BOMTreeIteratorNext(bomIterator);
 	}
-	
-	return outData;
 }
 ```   
 
@@ -222,7 +243,7 @@ Tree APPEARANCEKEYS
 ### FACETKEYS Tree
 + Key：asset name  
 + Value： attributes of image in asset ，is renditionkeytoken struct. 
-	+ 存储了每个Asset 的一些 catalog 属性，每个asset设置成什么，都在这里体现（上午 asset catalog 介绍中介绍了一个asset具体可以设置哪些属性）
+	+ 存储了每个Asset 的一些 catalog 属性，每个asset设置成什么，都在这里体现（上面 asset catalog 介绍中介绍了一个asset具体可以设置哪些属性）
 
 ```  
 struct renditionkeytoken {
@@ -322,6 +343,7 @@ RENDITION Tree 的 key 上面已经介绍，其 value 部分主要分为三个�
 + TLV (Type-length-value) 
 	+ 长度在 csiheader 指定
 	+ 包含一些基本信息，csiheader放不下的基本信息，key value 对，key 的选择  
+	 
  		
  		```
 		 enum RenditionTLVType  
@@ -377,6 +399,27 @@ struct CUIThemePixelRendition {
 > The rawData contains the real data - either uncompressed or compressed. If the data is compressed, you will need to decompress it using the algorithm specified in the compressionType field.
 
 + sizeondisk = rendition Tree 的value 的大小 = csiheader length（184）+ renditionLength + TLV length
+
+# 小结
+如果想要理解CAR文件的结构，需要先了解BOM结构，BOM结构简单总结下：
+
++ header
+	+ Block Table：存储了每个block的偏移量、长度和id
+	+ TOC：为key/value，存储了blockname/blockID
++ 正文部分，存储具体的数据，有两个类型
+	+  结构体
+	+  Tree
+
+CAR 文件利用了BOM结构，他可以很快的根据BLOCk name确定BLOCKID，进而确定数据，一些数据都是BLOCk块，这里主要总结与查询一张图片数据有关的：
+
++ 结构体
+	+ 存储了该CAR中图片用到过的 reditionKey
++ Tree
+	+ key：图片名字，value 是数组，数组中是reditionkey：reditionvalue
+	+ key：结构体中罗列的reditionKey对应的value ；value 对应图片的数据
+
+查找一个图片的了流程：
+根据name——确定reditonkye 和value——再根据结构体确定完整的reditionvalue值——作为key去tree中查找图片对应的数据  
 
 	
 # 关于 Assets.car 文件结构的一些思考
