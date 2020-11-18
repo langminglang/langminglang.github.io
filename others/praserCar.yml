@@ -1,0 +1,633 @@
+meta:
+  id: car
+  file-extension: car
+  endian: le
+  encoding: utf-8
+seq:
+  - id: header
+    type: bom_store_header
+instances:
+  table_of_content:
+    pos: header.toc_offset
+    size: header.toc_size
+    type: toc_main
+  block_table:
+    pos: header.block_table_index_offset
+    size: header.block_table_index_length
+    type: block_table_main
+enums:
+  rendition_layout_type:
+    0x007: text_effect
+    0x009: vectors
+    
+    10: image__one_part_fixed_size
+    11: image__one_part_tile
+    12: image__one_part_scale
+    20: image__three_part_h_tile
+    21: image__three_part_h_scale
+    22: image__three_part_h_uniform
+    23: image__three_part_v_tile
+    24: image__three_part_v_scale
+    25: image__three_part_v_uniform
+
+    30: image__nine_part_tile
+    31: image__nine_part_scale
+    32: image__nine_part_horizontal_uniform_vertical_scale
+    33: image__nine_part_horizontal_scale_vertical_uniform
+    34: image__nine_part_edges_only
+
+    40: image__many_part_layout_unknown
+    50: image__animation_film_strip
+    
+    0x3e8: vector
+    0x3e9: external_link
+    0x3ea: layer_stack
+    0x3eb: internal_reference
+    0x3ec: packed_image
+    0x3ed: name_list
+    0x3ee: unknown_add_object
+    0x3ef: texture
+    0x3f0: texture_image
+    0x3f1: color
+    0x3f2: multisize_image
+    0x3f4: layer_reference
+    0x3f5: content_redition
+    0x3f6: recognition_object
+    0x3f7: unknown_3f7
+    0x3f8: unknown_3f8
+    0x3f9: symbol
+
+  compress_type:
+    0: uncompressed
+    1: rle
+    2: zip
+    3: lzvn
+    4: lzfse
+    5: jpeg_lzfse
+    6: blurred
+    7: astc
+    8: palette_img
+    9: hevc
+    10: deepmap_lzfse
+    11: deepmap2
+
+  rendition_tlv_type:
+    0x3e9: slices
+    0x3eb: metrics
+    0x3ec: blend_mode_and_opacity
+    0x3ed: uti
+    0x3ee: exif_orientation
+    0x3ef: unknown_1007
+    0x3f0: external_tags
+    0x3f1: frame
+    0x3f2: unknown_1010
+    0x3f3: unknown_1011
+    0x3f4: unknown_1012
+    0x3f5: unknown_1013
+    0x3f6: unknown_1014
+    0x3f7: unknown_1015
+    0x3f8: unknown_1016
+    0x3f9: unknown_1017
+    0x3fa: symbol
+
+  color_space_id_type:
+    0: srgb
+    1: gray_gamma2_2
+    2: display_p3
+    3: extended_range_srgb
+    4: extended_linear_srgb
+    5: extended_gray
+  rendition_attribute_type:
+    0: look
+    1: element  # kCRThemeElementName
+    2: part # kCRThemePartName
+    3: size # kCRThemeSizeName
+    4: direction  # kCRThemeDirectionName
+    5: use_workaround_value
+    6: value  # kCRThemeValueName
+    7: appearance   # kCRThemeAppearanceName
+    8: dimension_1  # kCRThemeDimension1Name
+    9: dimension_2  # kCRThemeDimension2Name
+    10: state # kCRThemeStateName
+    11: layer       # kCRThemeLayerName
+    12: scale       # kCRThemeScaleName
+    13: localization  # kCRThemeLocalizationName
+    14: presentation_state # kCRThemePresentationStateName
+    15: idiom       # kCRThemeIdiomName
+    16: subtype     # kCRThemeSubtypeName
+    17: identifier  # kCRThemeIdentifierName
+    18: previous_value  # kCRThemePreviousValueName
+    19: previous_state  # kCRThemePreviousStateName
+    20: horizontal_size_class  # kCRThemeSizeClassHorizontalName
+    21: vertical_size_class # kCRThemeSizeClassVerticalName
+    22: memory_level_class # kCRThemeMemoryClassName
+    23: graphics_feature_set_class  # kCRThemeGraphicsClassName
+    24: display_gamut # kCRThemeDisplayGamutName
+    25: deployment_target # kCRThemeDeploymentTargetName
+    26: glyph_weight # kCRThemeGlyphWeightName
+    27: glyph_size  # kCRThemeGlyphSizeName
+types:
+  uuid:
+    seq:
+      - id: p1
+        type: u4
+      - id: p2
+        type: u2
+      - id: p3
+        type: u2
+      - id: p4
+        type: u2be
+      - id: p5
+        size: 6
+    -webide-representation: "{p1}-{p2}-{p3}-{p4}-{p5}"
+  bom_store_header:
+    seq:
+      - id: magic
+        contents: 'BOMStore'
+      - id: version
+        type: u4be
+      - id: block_count
+        type: u4be
+      - id: block_table_index_offset
+        type: u4be
+      - id: block_table_index_length
+        type: u4be
+      - id: toc_offset
+        type: u4be
+      - id: toc_size
+        type: u4be
+
+  car_header:
+    seq:
+      - id: magic
+        contents: 'RATC'
+      - id: coreui_version
+        type: u4
+      - id: storage_version
+        type: u4
+      - id: storage_timestamp
+        type: u4
+      - id: rendition_count
+        type: u4
+      - id: main_version_string
+        size: 128
+        encoding: utf-8
+        type: strz
+      - id: asset_storage_version_string
+        size: 256
+        encoding: utf-8
+        type: strz
+      - id: uuid
+        type: uuid
+      - id: associated_checksum
+        type: u4
+      - id: schema_version
+        type: u4
+      - id: color_space_id
+        type: u4
+      - id: key_semantics
+        type: u4
+  rendition_attribute:
+    seq:
+      - id: name
+        type: u2le
+        enum: rendition_attribute_type
+      - id: value
+        type: u2le
+  rendition_key_token:
+    seq:
+      - id: cursor_hotspot_x
+        type: u2be
+      - id: cursor_hotspot_y
+        type: u2be
+      - id: number_of_attributes
+        type: u2le
+      - id: attributes
+        type: rendition_attribute
+        repeat: expr
+        repeat-expr: number_of_attributes
+
+  rendition_flags: # This is different, because of endian?
+    seq:
+      - id: bitmap_encoding
+        type: b4
+      - id: is_opaque
+        type: b1
+      - id: is_vector_based
+        type: b1
+      - id: is_excluded_from_contrast_filter
+        type: b1
+      - id: is_header_flagged_fpo
+        type: b1
+
+      - id: reserved_1
+        type: b4
+
+      - id: is_tintable
+        type: b1
+      - id: is_flippable
+        type: b1
+      - id: opt_out_of_thinning
+        type: b1
+      - id: preserved_vector_representation
+        type: b1
+
+      - id: reserved
+        type: b16
+    instances:
+      raw_data:
+        pos: 8
+        size: 4
+
+  csi_header:
+    seq:
+      - id: magic
+        contents: 'ISTC' # Core Theme Structured Image.
+      - id: version
+        type: u4
+      - id: flags
+        type: rendition_flags
+      - id: width
+        type: u4
+      - id: height
+        type: u4
+      - id: scale_factor
+        type: u4
+      - id: pixel_format
+        type: str
+        size: 4
+        encoding: ASCII
+      - id: color_space
+        type: rendition_kv_content_color_space
+      - id: metadata
+        type: rendition_kv_content_metadata
+      - id: bitmap_list
+        type: rendition_kv_content_bitmap_list
+
+
+  rendition_kv_content_bitmap_list:
+    seq:
+      - id: tlv_length
+        type: u4
+      - id: unknown
+        type: u4
+      - id: zero
+        type: u4
+      - id: rendition_length
+        type: u4
+
+  rendition_kv_content_metadata:
+    seq:
+      - id: modtime
+        type: u4
+      - id: layout
+        type: u2
+        enum: rendition_layout_type
+      - id: zero
+        type: u2
+      - id: name
+        type: strz
+        size: 128
+        encoding: utf-8
+
+  rendition_kv_content_color_space:
+    seq:
+      - id: color_space_id
+        type: b4
+        enum: color_space_id_type
+      - id: reserved
+        type: b28
+
+  rendition_tlv_container:
+    seq:
+      - id: items
+        type: rendition_tlv
+        repeat: eos
+
+  rendition_tlv_content_type_uti:
+    seq:
+      - id: unknown
+        size: 8
+      - id: uti
+        type: strz
+        encoding: utf-8
+  rendition_tlv:
+    seq:
+      - id: tag
+        type: u4
+        enum: rendition_tlv_type
+      - id: length
+        type: u4
+      - id: data
+        size: length
+        type:
+          switch-on: tag
+          cases:
+            'rendition_tlv_type::uti': rendition_tlv_content_type_uti
+
+  rendition_kv_content:
+    seq:
+      - id: header
+        type: csi_header
+        size: 184
+      - id: tlv
+        type: rendition_tlv_container
+        size: header.bitmap_list.tlv_length
+      - id: data_tag
+        type: str
+        size: 4
+        encoding: ASCII
+        if: header.metadata.layout != rendition_layout_type::internal_reference
+      - id: data
+        if: header.metadata.layout != rendition_layout_type::internal_reference
+        type:
+          switch-on: data_tag.reverse
+          cases:
+            '"RAWD"': rendition_data_raw
+            '"CELM"': rendition_data_theme_pixel
+            '"COLR"': rendition_data_color
+            _: rendition_data_dummy
+
+  rendition_data_dummy:
+    seq:
+      # - id: tag
+      #   type: u4
+      - id: version
+        type: u4
+
+  rendition_data_color:
+    seq:
+      # - id: tag
+      #   type: u4
+      - id: version
+        type: u4
+      - id: color_space_id
+        type: b8
+      - id: unknown0
+        type: b3
+      - id: reserved
+        type: b21
+      - id: number_of_components
+        type: u4
+      - id: components
+        type: f8
+        repeat: expr
+        repeat-expr: number_of_components
+
+  rendition_data_raw:
+    seq:
+      # - id: magic
+      #   contents: 'DWAR' # RAWD
+      - id: version
+        type: u4
+      - id: raw_data_length
+        type: u4
+      - id: raw_data
+        size: raw_data_length
+
+  rendition_data_theme_pixel:
+    seq:
+      # - id: magic
+      #   contents: 'MLEC' # CELM
+      - id: version
+        type: u4
+      - id: compression_type
+        type: u4
+        enum: compress_type
+      - id: raw_data_length
+        type: u4
+      - id: raw_data
+        size: raw_data_length
+
+  extended_metadata:
+    seq:
+      - id: magic
+        contents: 'META'
+      - id: thinning_arguments
+        size: 256
+        encoding: utf-8
+        type: strz
+      - id: deployment_platform_version
+        size: 256
+        encoding: utf-8
+        type: strz
+      - id: deployment_platform
+        size: 256
+        encoding: utf-8
+        type: strz
+      - id: authoring_tool
+        size: 256
+        encoding: utf-8
+        type: strz
+
+  rendition_array_item:
+    params:
+      - id: index
+        type: u2
+    seq:
+      - id: value
+        type: u2
+
+  rendition_array:
+    seq:
+      - id: rendition_value
+        type: rendition_array_item(_index)
+        repeat: eos
+
+  workaround_rendition_key_format:
+    seq:
+      - id: rendition_key_tokens
+        type: u4
+        enum: rendition_attribute_type
+        repeat: eos
+
+  rendition_key_format:
+    seq:
+      - id: magic
+        contents: 'tmfk'
+      - id: version
+        type: u4
+      - id: maximum_rendition_key_token_count
+        type: u4
+      - id: rendition_key_tokens
+        type: u4
+        enum: rendition_attribute_type
+        repeat: expr
+        repeat-expr: maximum_rendition_key_token_count
+  toc_main:
+    seq:
+      - id: count
+        type: u4be
+      - id: items
+        type: toc_item
+        repeat: expr
+        repeat-expr: count
+  toc_item:
+    seq:
+      - id: block_index
+        type: u4be
+      - id: name_length
+        type: u1
+      - id: name_str
+        type: strz
+        size: name_length
+        encoding: utf-8
+    instances:
+      block_data:
+        io: _root._io
+        pos: _root.block_table.items[block_index].index
+        size: _root.block_table.items[block_index].size
+        type:
+          switch-on: name_str
+          cases:
+            '"CARHEADER"': car_header
+            '"EXTENDED_METADATA"': extended_metadata
+            '"FACETKEYS"': tree_main("strz", "rendition_key_token")
+            '"APPEARANCEKEYS"': tree_main("strz", "u2")
+            '"RENDITIONS"': tree_main("rendition_array", "rendition_kv_content")
+            '"KEYFORMAT"': rendition_key_format
+            '"BITMAPKEYS"': tree_main("aaa", "bbb")
+            '"LOCALIZATIONKEYS"': tree_main("strz", "u2")
+            '"KEYFORMATWORKAROUND"': workaround_rendition_key_format
+            
+  block_table_main:
+    seq:
+      - id: count
+        type: u4be
+      - id: items
+        type: block_table_item
+        repeat: expr
+        repeat-expr: count
+  block_table_item:
+    seq:
+      - id: index
+        type: u4be
+      - id: size
+        type: u4be
+    instances:
+      data:
+        io: _root._io
+        pos: index
+        size: size
+
+  tree_main:
+    params:
+      - id: key_type
+        type: str
+      - id: value_type
+        type: str
+    seq:
+      - id: magic
+        contents: 'tree'
+      - id: version
+        type: u4be
+      - id: children
+        type: u4be
+      - id: block_size
+        type: u4be
+      - id: path_count
+        type: u4be
+      # - id: unknown
+      # type: u4be
+    instances:
+      root_node:
+        io: _root._io
+        pos: _root.block_table.items[children].index
+        size: _root.block_table.items[children].size
+        type: tree_node(key_type, value_type)
+      root_node:
+        io: _root._io
+        pos: _root.block_table.items[children+1].index
+        size: _root.block_table.items[children+1].size
+
+  tree_node_kv_pair:
+    params:
+      - id: key_type
+        type: str
+      - id: value_type
+        type: str
+    seq:
+      - id: value_block_id
+        type: u4be
+      - id: key_block_id
+        type: u4be
+    instances:
+      key:
+        io: _root._io
+        pos: _root.block_table.items[key_block_id].index
+        size: _root.block_table.items[key_block_id].size
+        type:
+          switch-on: key_type
+          cases:
+            '"strz"': strz
+            '"rendition_array"': rendition_array
+        
+      value:
+        io: _root._io
+        pos: _root.block_table.items[value_block_id].index
+        size: _root.block_table.items[value_block_id].size
+        type:
+          switch-on: value_type
+          cases:
+            '"rendition_key_token"': rendition_key_token
+            '"u2"': u2
+            '"rendition_kv_content"': rendition_kv_content
+            
+            
+  tree_child:
+    params:
+      - id: key_type
+        type: str
+      - id: value_type
+        type: str
+    seq:
+      - id: child_block_id
+        type: u4be
+      - id: unknown_content
+        type: u4be
+    instances:
+      node:
+        io: _root._io
+        pos: _root.block_table.items[child_block_id].index
+        size: _root.block_table.items[child_block_id].size
+        type: tree_node(key_type, value_type)
+        
+  tree_node:
+    params:
+      - id: key_type
+        type: str
+      - id: value_type
+        type: str
+    seq:
+      - id: is_leaf
+        type: u2be
+      - id: path_count
+        type: u2be
+      - id: right_sibling_block_id
+        type: u4be
+      - id: left_sibling_block_id
+        type: u4be
+      - id: kv_pairs
+        type: tree_node_kv_pair(key_type, value_type)
+        repeat: expr
+        repeat-expr: path_count
+        if: is_leaf == 1
+      - id: children
+        type: tree_child(key_type, value_type)
+        repeat: expr
+        repeat-expr: path_count + 1 # why?
+        if: is_leaf == 0
+    instances:
+      left_sibling_node:
+        io: _root._io
+        pos: _root.block_table.items[left_sibling_block_id].index
+        size: _root.block_table.items[left_sibling_block_id].size
+        if: left_sibling_block_id != 0
+        type: tree_node(key_type, value_type)
+      right_sibling_node:
+        io: _root._io
+        pos: _root.block_table.items[right_sibling_block_id].index
+        size: _root.block_table.items[right_sibling_block_id].size
+        if: right_sibling_block_id != 0
+        type: tree_node(key_type, value_type)
+
