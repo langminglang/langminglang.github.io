@@ -63,7 +63,7 @@ kramdown:
 gitalk:
   enable: true    #是否开启Gitalk评论
   clientID: c7f390f9ad35e2b992e6                            #生成的clientID
-  clientSecret: 71a90fb426ab89b27682e3b5549f61d19ba63ab7    #生成的clientSecret
+  clientSecret: 1087f6e4ea6550c247e64043656e4eb1614a226d    #生成的clientSecret
   repo: langminglang.github.io    #仓库名称
   owner: langminglang    #github用户名
   admin: langminglang
